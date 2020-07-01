@@ -25,8 +25,7 @@ if nargin < 5
 end
 
 tDim = 1;
-
-[param,~,~] = HessianParseInputs(param,tDim);
+param = HessianParseInputs(param);
 
 % Multiply TR by weights to get the correct weighted TotalTR
 TRWeight = TRWeightingOrNAveFloor(param,scanTime,tDim,slice,slicedt);
@@ -37,17 +36,17 @@ TRWeight = TRWeight./(param.noise^2);
  
 % Form det(Hessian)
 % Hessian dimensions can be: 4 x PLD x Tau x BAT x f
-H(1,1,:,:,:,:) = TRWeight .* squeeze(sum(df.*df,tDim));
-H(1,2,:,:,:,:) = TRWeight .* squeeze(sum(df.*dBAT,tDim));
-H(2,1,:,:,:,:) = TRWeight .* squeeze(sum(dBAT.*df,tDim));
-H(2,2,:,:,:,:) = TRWeight .* squeeze(sum(dBAT.*dBAT,tDim));
+H(1,1,:,:,:,:) = TRWeight .* squeeze(sum(df   .* df  , tDim));
+H(1,2,:,:,:,:) = TRWeight .* squeeze(sum(df   .* dBAT, tDim));
+H(2,1,:,:,:,:) = TRWeight .* squeeze(sum(dBAT .* df  , tDim));
+H(2,2,:,:,:,:) = TRWeight .* squeeze(sum(dBAT .* dBAT, tDim));
 
-% Use arrayfun to apply pinv to data efficiently
-Hsize = size(H);
-tmp = reshape(H,2,2,prod(Hsize(3:end)));
-inverse = arrayfun(@(i) A.*jw_inv(tmp(:,:,i)) ,1:size(tmp,3),'UniformOutput',false);
-tmp = cell2mat(inverse);
-cov = reshape(tmp,2,2,prod(Hsize(3:end)));
+% Use arrayfun to apply inv to data efficiently
+Hsize   = size(H);
+tmp     = reshape(H,2,2,prod(Hsize(3:end)));
+inverse = arrayfun(@(i) A.*jw_inv(tmp(:,:,i)),1:size(tmp,3),'UniformOutput',false);
+tmp     = cell2mat(inverse);
+cov     = reshape(tmp,2,2,prod(Hsize(3:end)));
 
 cov = abs(cov);
 cov(isnan(cov)) = inf; % To correct for inf*0 errors in A.*inverse
