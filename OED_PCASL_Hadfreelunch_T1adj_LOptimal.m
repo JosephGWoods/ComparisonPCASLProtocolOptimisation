@@ -1,4 +1,4 @@
-function [bestPLD,bestTau,bestminVariance] = OED_PCASL_HadfreeLlnch_T1adj_LOptimal(varargin)
+function [bestPLD,bestTau,bestminVariance] = OED_PCASL_HadfreeLunch_T1adj_LOptimal(varargin)
 
 time = tic;
 
