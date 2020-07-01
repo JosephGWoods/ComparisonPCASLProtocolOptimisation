@@ -16,10 +16,7 @@ end
 
 tReadout = 0.58293 + 0.05472; % TGSE 20 slices, 47 EPI factor, with bandwidth = 2298 Hz + presat
 
-% I round the TR since there are occaisionally computational rounding
-% errors. I have used 5 decimal places to all dense BAT sampling, but I am
-% very unlikely to go finer than 0.001 density.
-
+% TR is rounded to avoid floating point errors
 switch param.filename
 
     case 'var_te_pCASL'
